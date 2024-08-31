@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "keywords": [],
+  "scripts": {
+    "build": "npm i && cd client && npm i && npm run build",
+    "start": "node --env-file=.env server/index.js",
+    "dev": "nodemon --env-file=.env server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
