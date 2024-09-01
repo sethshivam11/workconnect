@@ -36,4 +36,6 @@ npm run dev
 
 ### Required environment variables
 
-`MONGODB_URI`
+- `MONGODB_URI` 
+- `PORT`
+- `NODE_ENV` -> expected "production"

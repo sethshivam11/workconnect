@@ -1,11 +1,21 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Button } from "./components/ui/button";
+import Landing from "./components/pages/Landing";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className="flex items-center justify-center h-screen w-full bg-neutral-800">
-      <span className="animate-pulse text-white text-4xl">Site under development</span>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen font-inter flex flex-col">
+        <Navbar />
+        <Routes>
+          <Route path="/home" element={<Landing />} />
+          <Route path="/" element={<Landing />} />
+        </Routes>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 

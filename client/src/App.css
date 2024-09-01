@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Galindo&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+.scrollbar::-webkit-scrollbar {
+  width: 2px;
+  height: 4px;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+.scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #00000022;
+}
+@media screen and (max-width: 640px) {
+  .scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+    
+}
