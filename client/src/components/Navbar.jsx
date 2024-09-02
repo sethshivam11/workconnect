@@ -6,9 +6,9 @@ import { Menu } from "lucide-react";
 function Navbar() {
   const [openNav, setOpenNav] = React.useState(false);
   return (
-    <nav className="flex max-sm:flex-col items-center justify-around w-full h-20 border-b-2 z-10 fixed top-0 left-0 sm:backdrop-blur-sm">
-      <div className="flex items-center sm:justify-center justify-between max-sm:min-h-20 max-sm:w-full max-sm:px-6 max-sm:z-20 max-sm:border-b-2 max-sm:backdrop-blur-sm">
-        <Link to="/home" className="text-2xl font-extrabold tracking-tighter">
+    <nav className="flex max-sm:flex-col items-center justify-around w-full h-20 max-sm:h-16 border-b-2 z-10 fixed top-0 left-0 sm:backdrop-blur-sm">
+      <div className="flex items-center sm:justify-center justify-between max-sm:min-h-16 max-sm:w-full max-sm:px-6 max-sm:z-20 max-sm:border-b-2 max-sm:backdrop-blur-sm">
+        <Link to="/" className="text-2xl font-extrabold tracking-tighter">
           <span className="text-sky-400 font-galindo sm:mr-1 mr-0.5">Work</span>
           Connect
         </Link>
