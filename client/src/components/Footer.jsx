@@ -51,16 +51,16 @@ function Footer() {
           </div>
         </div>
         <div className="flex flex-col gap-2 justify-center">
-          <Link to="/privacy" className="hover:underline underline-offset-2">
+          <Link to="#" className="hover:underline underline-offset-2">
             About Us
           </Link>
-          <Link to="/privacy" className="hover:underline underline-offset-2">
+          <Link to="#" className="hover:underline underline-offset-2">
             Contact Us
           </Link>
-          <Link to="/privacy" className="hover:underline underline-offset-2">
+          <Link to="#" className="hover:underline underline-offset-2">
             Privacy Policy
           </Link>
-          <Link to="/privacy" className="hover:underline underline-offset-2">
+          <Link to="#" className="hover:underline underline-offset-2">
             Terms & Conditions
           </Link>
         </div>

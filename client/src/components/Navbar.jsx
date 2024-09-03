@@ -1,10 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 
 function Navbar() {
+  const location = useLocation();
   const [openNav, setOpenNav] = React.useState(false);
+
   return (
     <nav className="flex max-sm:flex-col items-center justify-around w-full h-20 max-sm:h-16 border-b-2 z-10 fixed top-0 left-0 sm:backdrop-blur-sm">
       <div className="flex items-center sm:justify-center justify-between max-sm:min-h-16 max-sm:w-full max-sm:px-6 max-sm:z-20 max-sm:border-b-2 max-sm:backdrop-blur-sm">
@@ -40,10 +42,17 @@ function Navbar() {
         </Link>
       </div>
       <div className="md:flex hidden gap-2">
-        <Link to="/login">
+        <Link
+          to="/login"
+          className={
+            location.pathname === "/signup" || location.pathname === "/login" ? "invisible" : "visible"
+          }
+        >
           <Button>Login</Button>
         </Link>
-        <Link to="/signup">
+        <Link to="/signup"className={
+            location.pathname === "/signup" || location.pathname === "/login" ? "invisible" : "visible"
+          }>
           <Button variant="outline" className="border-neutral-800">
             Sign Up
           </Button>
