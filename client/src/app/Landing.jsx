@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../components/ui/button";
 import {
   ArrowLeft,
   ArrowRight,
@@ -259,7 +259,9 @@ function Landing() {
         </Button>
       </section>
       <section className="flex flex-col items-center justify-center w-full px-12">
-        <h1 className="lg:text-4xl md:text-3xl text-2xl tracking-tight font-bold my-2">FAQs</h1>
+        <h1 className="lg:text-4xl md:text-3xl text-2xl tracking-tight font-bold my-2">
+          FAQs
+        </h1>
         <Accordion type="single" collapsible className="md:w-5/6 w-full mb-10">
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
