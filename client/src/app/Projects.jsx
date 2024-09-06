@@ -9,12 +9,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LocateFixedIcon, SearchIcon } from "lucide-react";
+import { Bookmark, LocateFixedIcon, Filter, SearchIcon } from "lucide-react";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 function Projects() {
-  const location = useLocation();
   const navigate = useNavigate();
   const projects = [
     {
@@ -234,18 +241,14 @@ function Projects() {
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <main className="flex flex-col gap-6 w-4/5 min-h-screen pt-28 pb-4">
+      <main className="flex flex-col sm:gap-6 gap-3 xl:w-4/5 w-full xl:px-0 sm:px-6 px-3 min-h-screen sm:pt-28 pt-20 pb-4">
         <h1 className="text-2xl tracking-tight font-bold">Browse Projects</h1>
         <div className="flex gap-2 justify-between items-center w-full">
           <Select
             onValueChange={(value) => navigate(value)}
-            defaultValue={
-              location.pathname.includes("projects")
-                ? "/projects"
-                : "/freelancers"
-            }
+            defaultValue="/projects"
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] max-sm:hidden">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -258,25 +261,27 @@ function Projects() {
             <SearchIcon size="20" /> Search
           </Button>
         </div>
-        <div className="flex items-start gap-2 w-full">
-          <div className="flex flex-col gap-2 w-1/3 justify-center bg-neutral-100 rounded-lg p-4">
+        <div className="flex items-start gap-4 w-full">
+          <div className="lg:flex hidden flex-col gap-2 w-1/4 justify-center bg-neutral-100 rounded-lg p-4">
             <h2 className="tracking-tight font-semibold text-xl text-center">
               Filters
             </h2>
             <hr className="my-1 w-full border-neutral-300 rounded" />
             <h3 className="text-lg">Price</h3>
-            <div className="flex justify-center items-center gap-1.5">
-              min
-              <Input className="w-9/12 bg-white" />
-              INR
+            <div className="flex justify-center items-center gap-1.5 whitespace-nowrap">
+              Min ₹
+              <Input placeholder="0" className="w-9/12 bg-white" />
             </div>
-            <div className="flex justify-center items-center gap-1.5">
-              max
-              <Input className="w-9/12 bg-white" />
-              INR
+            <div className="flex justify-center items-center gap-1.5 whitespace-nowrap">
+              Max ₹
+              <Input placeholder="1000" className="w-9/12 bg-white" />
             </div>
             <hr className="my-1 w-full border-neutral-300 rounded" />
             <h3 className="text-lg">Skills</h3>
+            <Input
+              placeholder="Search for skills"
+              className="bg-white w-full"
+            />
             <div className="flex items-center gap-2 my-2">
               <Checkbox id="label-1" />
               <Label htmlFor="label-1" className="font-normal">
@@ -334,7 +339,10 @@ function Projects() {
             <hr className="my-1 w-full border-neutral-300 rounded" />
             <h3 className="text-lg">Project Location</h3>
             <div className="flex gap-2">
-              <Input className="bg-white w-full" />
+              <Input
+                placeholder="Enter a location"
+                className="bg-white w-full"
+              />
               <Button variant="outline" size="icon" className="px-2 w-fit">
                 <LocateFixedIcon size="20" />
               </Button>
@@ -372,11 +380,11 @@ function Projects() {
               </Label>
             </div>
           </div>
-          <div className="w-2/3 bg-neutral-100 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2 items-center">
+          <div className="lg:w-3/4 w-full bg-neutral-100 rounded-lg sm:p-4 py-4">
+            <div className="flex items-center justify-between max-sm:px-4">
+              <div className="sm:flex hidden gap-2 items-center">
                 Showing
-                <Select defaultValue="10">
+                <Select defaultValue="20">
                   <SelectTrigger className="w-20">
                     <SelectValue />
                   </SelectTrigger>
@@ -390,7 +398,9 @@ function Projects() {
                 </Select>
                 entries
               </div>
-              <p className="text-neutral-500">Total 100 results</p>
+              <p className="text-neutral-500 max-md:text-sm max-sm:hidden">
+                Total {projects.length} results
+              </p>
               <div className="flex gap-2 items-center">
                 Sort By
                 <Select defaultValue="Latest">
@@ -407,49 +417,75 @@ function Projects() {
                   </SelectContent>
                 </Select>
               </div>
+              <Button variant="link" className="sm:hidden">
+                <Filter className="mr-1" size="20" />
+                Filters
+              </Button>
             </div>
-            <hr className="my-3 w-full border-neutral-300 rounded" />
-            {projects.map((project, index) => (
-              <div
-                key={index}
-                className="w-full ring-1 ring-neutral-200 rounded p-2"
-              >
-                <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">{project.title}</h2>
-                  <p>{project.bids}</p>
-
-                </div>
-                <p>{project.description}</p>
-                <div className="flex items-center gap-2">
-                  <p>Budget:</p>
-                  <p>
-                    ₹{project.minBudget} - ₹{project.maxBudget}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p>Bids:</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p>Average Bid:</p>
-                  <p>{project.averageBid} INR</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p>Skills:</p>
-                  <div className="flex gap-2">
-                    {project.skills.map((skill, index) => (
-                      <span key={index}>
-                        {skill}
-                      </span>
-                    ))}
+            <hr className="my-3 w-full border-neutral-300 rounded visible max-sm:invisible" />
+            <div className="flex flex-col sm:gap-2 gap-1">
+              {projects.map((project, index) => (
+                <Link key={index} to="#">
+                  <div className="w-full flex flex-col gap-2 h-fit sm:ring-1 border-t-[1px] border-b-[1px] border-neutral-200 ring-neutral-200 sm:rounded p-4">
+                    <div className="flex gap-1 justify-between items-center overflow-hidden">
+                      <h2 className="text-xl tracking-tight font-semibold w-11/12 text-sky-500 truncate">
+                        {project.title}
+                      </h2>
+                      <p className="whitespace-nowrap">Bids: {project.bids}</p>
+                    </div>
+                    <p>
+                      Budget: ₹{project.minBudget} - ₹{project.maxBudget}
+                    </p>
+                    <p>{project.description}</p>
+                    <p>Average Bid: ₹{project.averageBid}</p>
+                    <div className="flex items-end justify-between">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex max-sm:flex-wrap gap-2 text-sky-500 text-sm overflow-hidden max-w-full">
+                          {project.skills.map(
+                            (skill, index) =>
+                              index < 4 && (
+                                <span
+                                  className="hover:underline underline-offset-2 whitespace-nowrap truncate"
+                                  key={index}
+                                >
+                                  {skill}
+                                </span>
+                              )
+                          )}
+                        </div>
+                        <p className="text-neutral-500 text-xs">
+                          {project.createdAt.toDateString()}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="icon" title="Bookmark">
+                        <Bookmark />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p>Posted on:</p>
-                  <p>{project.createdAt.toDateString()}</p>
-                </div>
-                <Button className="">Bid Now</Button>
-              </div>
-            ))}
+                </Link>
+              ))}
+            </div>
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious href="#" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#" isActive>
+                    2
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext href="#" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       </main>
