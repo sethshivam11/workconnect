@@ -41,7 +41,8 @@ const fullNameSchema = z
   })
   .max(20, {
     message: "Name must be less than 20 characters",
-  });
+  })
+  .regex(/^[a-zA-Z\s]+$/, { message: "Name can only contain letters" });
 
 const verificationCodeSchema = z.coerce
   .number({

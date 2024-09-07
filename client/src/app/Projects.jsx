@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Bookmark, LocateFixedIcon, Filter, SearchIcon } from "lucide-react";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Pagination,
   PaginationContent,
@@ -20,10 +20,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 function Projects() {
   const navigate = useNavigate();
-  const projects = [
+  const data = [
     {
       title: "Responsive Landing Page Design",
       description:
@@ -238,6 +246,17 @@ function Projects() {
       createdAt: new Date("2024-09-02"),
     },
   ];
+  const [searchParams] = useSearchParams();
+  const [page, setPage] = React.useState(1);
+  const [search, setSearch] = React.useState("");
+  const [projects, setProjects] = React.useState([]);
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const page = parseInt(searchParams.get("page")) || 1;
+    if (page) setPage(page);
+    setProjects(data.slice((page - 1) * 12, page * 12));
+  }, [searchParams, data]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -256,7 +275,14 @@ function Projects() {
               <SelectItem value="/freelancers">Freelancers</SelectItem>
             </SelectContent>
           </Select>
-          <Input placeholder="Search for projects" className="w-full" />
+          <Input
+            name="search"
+            autoComplete="search"
+            placeholder="Search for projects"
+            className="w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <Button className="flex gap-2">
             <SearchIcon size="20" /> Search
           </Button>
@@ -270,15 +296,20 @@ function Projects() {
             <h3 className="text-lg">Price</h3>
             <div className="flex justify-center items-center gap-1.5 whitespace-nowrap">
               Min ₹
-              <Input placeholder="0" className="w-9/12 bg-white" />
+              <Input name="min" placeholder="0" className="w-9/12 bg-white" />
             </div>
             <div className="flex justify-center items-center gap-1.5 whitespace-nowrap">
               Max ₹
-              <Input placeholder="1000" className="w-9/12 bg-white" />
+              <Input
+                name="max"
+                placeholder="1000"
+                className="w-9/12 bg-white"
+              />
             </div>
             <hr className="my-1 w-full border-neutral-300 rounded" />
             <h3 className="text-lg">Skills</h3>
             <Input
+              name="skills"
               placeholder="Search for skills"
               className="bg-white w-full"
             />
@@ -340,6 +371,7 @@ function Projects() {
             <h3 className="text-lg">Project Location</h3>
             <div className="flex gap-2">
               <Input
+                name="location"
                 placeholder="Enter a location"
                 className="bg-white w-full"
               />
@@ -380,28 +412,12 @@ function Projects() {
               </Label>
             </div>
           </div>
-          <div className="lg:w-3/4 w-full bg-neutral-100 rounded-lg sm:p-4 py-4">
-            <div className="flex items-center justify-between max-sm:px-4">
-              <div className="sm:flex hidden gap-2 items-center">
-                Showing
-                <Select defaultValue="20">
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="30">30</SelectItem>
-                    <SelectItem value="40">40</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-                entries
-              </div>
+          <div className="lg:w-3/4 w-full bg-neutral-100 rounded-lg sm:p-4 py-3">
+            <div className="flex items-center justify-between max-sm:px-2">
               <p className="text-neutral-500 max-md:text-sm max-sm:hidden">
                 Total {projects.length} results
               </p>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center max-sm:text-sm">
                 Sort By
                 <Select defaultValue="Latest">
                   <SelectTrigger className="w-40">
@@ -417,8 +433,12 @@ function Projects() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button variant="link" className="sm:hidden">
-                <Filter className="mr-1" size="20" />
+              <Button
+                variant="outline"
+                className="sm:hidden text-sm"
+                onClick={() => setFiltersOpen(true)}
+              >
+                <Filter className="mr-1" size="18" />
                 Filters
               </Button>
             </div>
@@ -457,7 +477,20 @@ function Projects() {
                           {project.createdAt.toDateString()}
                         </p>
                       </div>
-                      <Button variant="ghost" size="icon" title="Bookmark">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Bookmark"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const icon = e.currentTarget.childNodes[0];
+                          if (icon.getAttribute("fill") === "currentColor") {
+                            icon.setAttribute("fill", "none");
+                          } else {
+                            icon.setAttribute("fill", "currentColor");
+                          }
+                        }}
+                      >
                         <Bookmark />
                       </Button>
                     </div>
@@ -468,27 +501,196 @@ function Projects() {
             <Pagination className="mt-4">
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious
+                    className={
+                      page === 1 ? "opacity-50 pointer-events-none" : ""
+                    }
+                    href={`?page=${page > 1 ? page - 1 : 1}`}
+                  />
                 </PaginationItem>
+
+                {Array.from(
+                  { length: Math.min(5, Math.ceil(data.length / 12)) },
+                  (_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        href={`?page=${index + 1}`}
+                        isActive={page === index + 1}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+
+                {Math.ceil(data.length / 12) > 5 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
                 <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#" isActive>
-                    2
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">3</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
+                  <PaginationNext
+                    href={`?page=${
+                      page < Math.ceil(data.length / 12)
+                        ? page + 1
+                        : Math.ceil(data.length / 12)
+                    }`}
+                    className={
+                      Math.ceil(data.length / 12) === page
+                        ? "opacity-50 pointer-events-none"
+                        : ""
+                    }
+                  />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
           </div>
         </div>
       </main>
+      <Sheet open={filtersOpen} onOpenChange={(open) => setFiltersOpen(open)}>
+        <SheetContent
+          side="left"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="scrollbar overflow-auto"
+        >
+          <SheetHeader>
+            <SheetTitle className="text-xl font-bold tracking-tight">
+              Filters
+            </SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-1.5 w-full justify-center py-4">
+            <h3 className="text-lg">Price</h3>
+            <div className="flex justify-center items-center gap-1.5 whitespace-nowrap">
+              Min ₹
+              <Input name="min" placeholder="0" className="w-9/12 bg-white" />
+            </div>
+            <div className="flex justify-center items-center gap-1.5 whitespace-nowrap">
+              Max ₹
+              <Input
+                name="max"
+                placeholder="1000"
+                className="w-9/12 bg-white"
+              />
+            </div>
+            <hr className="my-1 w-full border-neutral-300 rounded" />
+            <h3 className="text-lg">Skills</h3>
+            <Input
+              name="skills"
+              placeholder="Search for skills"
+              className="bg-white w-full"
+            />
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-1" />
+              <Label htmlFor="label-1" className="font-normal">
+                HTML
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-2" />
+              <Label htmlFor="label-2" className="font-normal">
+                CSS
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-3" />
+              <Label htmlFor="label-3" className="font-normal">
+                JavaScript
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-4" />
+              <Label htmlFor="label-4" className="font-normal">
+                React
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-5" />
+              <Label htmlFor="label-5" className="font-normal">
+                MongoDB
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-6" />
+              <Label htmlFor="label-6" className="font-normal">
+                NodeJS
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-7" />
+              <Label htmlFor="label-7" className="font-normal">
+                Tailwind
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-8" />
+              <Label htmlFor="label-8" className="font-normal">
+                ExpressJS
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-9" />
+              <Label htmlFor="label-9" className="font-normal">
+                GraphQL
+              </Label>
+            </div>
+            <hr className="my-1 w-full border-neutral-300 rounded" />
+            <h3 className="text-lg">Project Location</h3>
+            <div className="flex gap-2">
+              <Input
+                name="location"
+                placeholder="Enter a location"
+                className="bg-white w-full"
+              />
+              <Button variant="outline" size="icon" className="px-2 w-fit">
+                <LocateFixedIcon size="20" />
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-10" />
+              <Label htmlFor="label-10" className="font-normal accent-blue-500">
+                Gurgaon
+              </Label>
+            </div>
+            <hr className="my-1 w-full border-neutral-300 rounded" />
+            <h3 className="text-lg">Languages</h3>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-11" />
+              <Label htmlFor="label-11" className="font-normal">
+                English
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-12" />
+              <Label htmlFor="label-12" className="font-normal">
+                Hindi
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-13" />
+              <Label htmlFor="label-13" className="font-normal">
+                Punjabi
+              </Label>
+            </div>
+            <div className="flex items-center gap-2 my-2">
+              <Checkbox id="label-14" />
+              <Label htmlFor="label-14" className="font-normal">
+                Tamil
+              </Label>
+            </div>
+          </div>
+          <SheetFooter className="max-sm:gap-2">
+            <SheetClose asChild>
+              <Button type="submit" variant="outline">
+                Clear All
+              </Button>
+            </SheetClose>
+            <SheetClose asChild>
+              <Button type="submit">Apply</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
